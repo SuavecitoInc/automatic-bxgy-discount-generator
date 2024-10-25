@@ -35,9 +35,9 @@ Configuration:
     - percentage: if `PERCENT` selected you must set a percent (ex: 0.1 - 1)
     - amount: if `AMOUNT` selected you must set an amount
   - startsAt: date in `YYYY-MM-DD` format
-  - excludedByOptions: Variant options to use as filters to exclude variants from discount eligibility
-  - excludedByMetafield: A metafield to used as a filter to exclude variants from discount eligibility
-  - metafield: Set this metafield for all discount eligible variants
+- excludedByOptions: Variant options to use as filters to exclude variants from discount eligibility
+- excludedByMetafield: A metafield to used as a filter to exclude variants from discount eligibility
+- metafield: Set this metafield for all discount eligible variants
 
 > ./config.ts
 
