@@ -20,7 +20,7 @@ SHOPIFY_ADMIN_API_TOKEN=
 
 Configuration:
 
-> Please update `.config.ts`
+> Please update `.config.ts`, the metafield property is optional, we have a theme specific use case for this.
 
 ```typescript
 const config: Config = {
@@ -37,6 +37,11 @@ const config: Config = {
     },
   },
   excludedOptions: ['Limited', 'Special Edition'],
+  metafield: {
+    namespace: 'custom',
+    key: 'somekey',
+    type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
+  },
 };
 ```
 

@@ -16,6 +16,11 @@ type Config = {
   };
   excludedOptions: string[];
   startsAt: string;
+  metafield: {
+    namespace: string;
+    key: string;
+    type: string;
+  } | null;
 };
 
 // example percentage discount
@@ -40,6 +45,11 @@ const config: Config = {
     'The Nightmare Before Christmas',
   ],
   startsAt: '2024-10-31',
+  metafield: {
+    namespace: 'debut',
+    key: 'is_bogo',
+    type: 'boolean',
+  },
 };
 
 // example amount of discount
@@ -64,6 +74,11 @@ const configAmount: Config = {
     'The Nightmare Before Christmas',
   ],
   startsAt: '2024-10-31',
+  metafield: {
+    namespace: 'debut',
+    key: 'is_bogo',
+    type: 'boolean',
+  },
 };
 
 export default config;

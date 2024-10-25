@@ -125,11 +125,7 @@ async function updateVariantMetafield(
 }
 
 async function updateVariants(variantIds: string[]) {
-  const metafield = {
-    namespace: 'debut',
-    key: 'is_bogo',
-    type: 'boolean',
-  };
+  const { metafield } = config;
   const value = 'true';
 
   console.log(
@@ -184,7 +180,9 @@ async function main() {
     console.log(variantIds.length, 'variants are eligible for discount');
 
     // set metafield
-    await updateVariants(variantIds);
+    if (config.metafield) {
+      await updateVariants(variantIds);
+    }
     // create discount
     await createDiscount(variantIds);
   } catch (err: any) {
