@@ -188,11 +188,11 @@ async function main() {
     console.log(variantIds.length, 'variants are eligible for discount');
 
     // set metafield
-    // if (config.metafield) {
-    //   await updateVariants(variantIds);
-    // }
-    // // create discount
-    // await createDiscount(variantIds);
+    if (config.metafield) {
+      await updateVariants(variantIds);
+    }
+    // create discount
+    await createDiscount(variantIds);
   } catch (err: any) {
     console.log('ERROR', err);
   }
