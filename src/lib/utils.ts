@@ -30,13 +30,14 @@ export async function shopifyAdmin<T>(
     const json = await response.json();
 
     return json as JsonResponse<T>;
-  } catch (error: any) {
-    console.log(error);
+  } catch (err: any) {
+    console.log('Error fetching data', err);
+    throw new Error(err?.message || 'Error fetching data');
   }
 }
 
 export function getDate() {
-  return moment(config.startsAt).tz('America/Los_Angeles').toISOString();
+  return moment(config.discount.startsAt).tz(config.timezone).toISOString();
 }
 
 function discountItemsInput(variants: string[]) {
@@ -194,7 +195,7 @@ export function verifyConfig() {
     errors.push('Discount Title is required');
   }
 
-  if (!config.excludedOptions) {
+  if (!config.excludedByOptions) {
     errors.push('Excluded options is required');
   }
 

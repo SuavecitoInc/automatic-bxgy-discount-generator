@@ -1,5 +1,5 @@
 const query = `#graphql
-  query GetCollectionByHandle($handle: String!) {
+  query GetCollectionByHandle($handle: String!, $namespace: String!, $key: String!) {
     collectionByHandle(handle: $handle) {
       id
       title
@@ -22,6 +22,9 @@ const query = `#graphql
                   }
                   selectedOptions {
                     name
+                    value
+                  }
+                  excludeFromDiscounts: metafield(namespace: $namespace, key: $key) {
                     value
                   }
                 }

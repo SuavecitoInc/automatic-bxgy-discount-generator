@@ -20,12 +20,33 @@ SHOPIFY_ADMIN_API_TOKEN=
 
 Configuration:
 
-> Please update `.config.ts`, the metafield property is optional, we have a theme specific use case for this.
+> Please update `.config.ts`, the `metafield` and `excludedByMetafield` properties are optional, we have a theme specific use case for these.
+
+- collectionHandle: the collection to fetch
+- discount:
+  - title: The discount's Title
+  - customerBuys:
+    - type: either `ITEMS` (minimum quantity of items) or `AMOUNT` (minimum purchase amount)
+    - quantity: if `ITEMS` selected you must set a quantity
+    - amount: if `AMOUNT` selected you must set an amount
+  - customerGets:
+    - quantity: the quantity to be discounted
+    - discountType: either `AMOUNT` or `PERCENT`
+    - percentage: if `PERCENT` selected you must set a percent (ex: 0.1 - 1)
+    - amount: if `AMOUNT` selected you must set an amount
+  - startsAt: date in YYYY-MM-DD format
+  - excludedByOptions: Variant options to use as filters to exclude variants from discount eligibility
+  - excludedByMetafield: A metafield to used as a filter to exclude variants from discount eligibility
+  - metafield: Set this metafield for all discount eligible variants
+
+> ./config.ts
 
 ```typescript
 const config: Config = {
+  collectionHandle: 'some-collection',
+  timezone: 'America/Los_Angeles',
   discount: {
-    title: 'Test Buy 2 Get 1 Free',
+    title: 'Buy 2 Get 1 Free',
     customerBuys: {
       type: 'ITEMS', // 'AMOUNT' | 'ITEMS'
       quantity: '2',
@@ -35,11 +56,18 @@ const config: Config = {
       discountType: 'PERCENT', // 'AMOUNT' | 'PERCENT'
       percentage: 1, // 0.1 - 1
     },
+    startsAt: '2024-10-31',
   },
-  excludedOptions: ['Limited', 'Special Edition'],
+  excludedByOptions: ['Limited', 'Special Edition'],
+  excludedByMetafield: {
+    namespace: 'some_namespace',
+    key: 'some_key',
+    type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
+    value: 'true',
+  },
   metafield: {
-    namespace: 'custom',
-    key: 'somekey',
+    namespace: 'some_namespace',
+    key: 'some_key',
     type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
   },
 };

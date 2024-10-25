@@ -11,12 +11,17 @@ import {
 
 import config from '../config';
 
-async function getProductsFromCollection(handle: string) {
+type Products =
+  GetCollectionByHandleQuery['collectionByHandle']['products']['edges'];
+
+async function getProductsFromCollection() {
   // get products from collection
   const response = await shopifyAdmin<GetCollectionByHandleQuery>(
     QueryGetCollectionByHandle,
     {
-      handle,
+      handle: config.collectionHandle || 'mens-hair',
+      namespace: config?.excludedByMetafield?.namespace || 'test',
+      key: config?.excludedByMetafield?.key || 'test',
     },
   );
 
@@ -33,31 +38,35 @@ async function getProductsFromCollection(handle: string) {
   return response.data.collectionByHandle.products.edges;
 }
 
-function filterProducts(
-  products: GetCollectionByHandleQuery['collectionByHandle']['products']['edges'],
-) {
+function filterProducts(products: Products) {
   // use config to filter out products that are excluded
   console.log(
     'Filtering products with excluded options:',
-    config.excludedOptions.map((option) => option).join(', '),
+    config.excludedByOptions.map((option) => option).join(', '),
   );
   const filteredVariants: {
     id: string;
     sku: string;
     title: string;
     selectedOptions: { name: string; value: string }[];
+    excludeFromDiscounts: boolean;
   }[] = [];
   for (const product of products) {
     for (const variant of product.node.variants.edges) {
       const hasExcludedOption = variant.node.selectedOptions.some((option) =>
-        config.excludedOptions.includes(option.value),
+        config.excludedByOptions.includes(option.value),
       );
-      if (!hasExcludedOption) {
+
+      const excludeFromDiscounts =
+        variant.node.excludeFromDiscounts?.value === 'true';
+
+      if (!hasExcludedOption && !excludeFromDiscounts) {
         filteredVariants.push({
           id: variant.node.id,
           sku: variant.node.sku,
           title: `${product.node.title} - ${variant.node.title}`,
           selectedOptions: variant.node.selectedOptions,
+          excludeFromDiscounts,
         });
       }
     }
@@ -77,7 +86,7 @@ async function createDiscount(variants: string[]) {
 
   if (response.error) {
     console.log('ERROR', response.error);
-    return null;
+    throw new Error('Error creating discount');
   }
   const discount =
     response.data.discountAutomaticBxgyCreate.automaticDiscountNode.id;
@@ -161,14 +170,13 @@ async function main() {
     }
     console.log("Config is valid, let's proceed");
     // get products from collection
-    const products = await getProductsFromCollection(
-      config.collectionHandle || 'mens-hair',
-    );
+    const products = await getProductsFromCollection();
     if (!products) {
       console.log('No products found');
       return;
     }
     console.log(products.length, 'products found');
+
     // use config to filter out products that are excluded
     const filteredVariants = filterProducts(products);
     if (!filteredVariants) {
@@ -180,11 +188,11 @@ async function main() {
     console.log(variantIds.length, 'variants are eligible for discount');
 
     // set metafield
-    if (config.metafield) {
-      await updateVariants(variantIds);
-    }
-    // create discount
-    await createDiscount(variantIds);
+    // if (config.metafield) {
+    //   await updateVariants(variantIds);
+    // }
+    // // create discount
+    // await createDiscount(variantIds);
   } catch (err: any) {
     console.log('ERROR', err);
   }

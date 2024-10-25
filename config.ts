@@ -1,5 +1,6 @@
 type Config = {
   collectionHandle: string;
+  timezone: string;
   discount: {
     title: string;
     customerBuys: {
@@ -13,9 +14,15 @@ type Config = {
       percentage?: number;
       amount?: string;
     };
+    startsAt: string;
   };
-  excludedOptions: string[];
-  startsAt: string;
+  excludedByOptions: string[];
+  excludedByMetafield: {
+    namespace: string;
+    key: string;
+    type: string;
+    value: string;
+  } | null;
   metafield: {
     namespace: string;
     key: string;
@@ -26,6 +33,7 @@ type Config = {
 // example percentage discount
 const config: Config = {
   collectionHandle: 'mens-hair',
+  timezone: 'America/Los_Angeles',
   discount: {
     title: 'Test Buy 2 Get 1 Free',
     customerBuys: {
@@ -37,14 +45,21 @@ const config: Config = {
       discountType: 'PERCENT',
       percentage: 1,
     },
+    startsAt: '2024-10-31',
   },
-  excludedOptions: [
+  excludedByOptions: [
     'Limited',
     'Johnny Cupcakes',
     "Flamin' Hot",
     'The Nightmare Before Christmas',
   ],
-  startsAt: '2024-10-31',
+  excludedByMetafield: {
+    namespace: 'suavecito_function',
+    key: 'exclude_from_all_discounts',
+    type: 'boolean',
+    value: 'true',
+  },
+
   metafield: {
     namespace: 'debut',
     key: 'is_bogo',
@@ -55,6 +70,7 @@ const config: Config = {
 // example amount of discount
 const configAmount: Config = {
   collectionHandle: 'mens-hair',
+  timezone: 'America/Los_Angeles',
   discount: {
     title: 'Test Amount Discount',
     customerBuys: {
@@ -66,14 +82,20 @@ const configAmount: Config = {
       discountType: 'AMOUNT',
       amount: '33.33',
     },
+    startsAt: '2024-10-31',
   },
-  excludedOptions: [
+  excludedByOptions: [
     'Limited',
     'Johnny Cupcakes',
     "Flamin' Hot",
     'The Nightmare Before Christmas',
   ],
-  startsAt: '2024-10-31',
+  excludedByMetafield: {
+    namespace: 'suavecito_function',
+    key: 'exclude_from_all_discounts',
+    type: 'boolean',
+    value: 'true',
+  },
   metafield: {
     namespace: 'debut',
     key: 'is_bogo',
