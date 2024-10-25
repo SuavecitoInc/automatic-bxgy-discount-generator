@@ -1,0 +1,35 @@
+{
+  "name": "suavecito-discount-generator",
+  "version": "1.0.0",
+  "description": "The BXGY Discount Generator automates the creation of Automatic Buy X Get Y discounts in Shopify.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "generate": "graphql-codegen --config admin.graphqlrc.ts",
+    "start": "npm run build && node dist/src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@shopify/api-codegen-preset": "^1.1.1",
+    "@shopify/graphql-codegen": "^0.1.0",
+    "@types/node": "^18.15.3",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.7.0",
+    "prettier": "^2.8.4",
+    "typescript": "^5.0.2"
+  },
+  "dependencies": {
+    "csv-write-stream": "^2.0.0",
+    "csvtojson": "^2.0.10",
+    "dotenv": "^16.0.3",
+    "isomorphic-fetch": "^3.0.0",
+    "moment-timezone": "^0.5.46"
+  }
+}
