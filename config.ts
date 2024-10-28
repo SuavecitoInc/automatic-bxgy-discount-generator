@@ -65,7 +65,7 @@ const config: Config = {
   metafields: [
     {
       namespace: 'debut',
-      key: 'is_bogo',
+      key: 'is_b2g1f',
       type: 'boolean',
       value: 'true',
     },
@@ -104,7 +104,7 @@ const configAmount: Config = {
   metafields: [
     {
       namespace: 'debut',
-      key: 'is_bogo',
+      key: 'is_b2g1f',
       type: 'boolean',
       value: 'true',
     },
