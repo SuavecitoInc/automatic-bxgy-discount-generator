@@ -201,7 +201,7 @@ async function main() {
       await updateVariants(variantIds);
     }
     // create discount
-    // await createDiscount(variantIds);
+    await createDiscount(variantIds);
   } catch (err: any) {
     console.log('ERROR', err);
   }
