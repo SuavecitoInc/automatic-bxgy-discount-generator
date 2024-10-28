@@ -23,11 +23,14 @@ type Config = {
     type: string;
     value: string;
   } | null;
-  metafield: {
-    namespace: string;
-    key: string;
-    type: string;
-  } | null;
+  metafields:
+    | {
+        namespace: string;
+        key: string;
+        type: string;
+        value: string;
+      }[]
+    | null;
 };
 
 // example percentage discount
@@ -59,12 +62,14 @@ const config: Config = {
     type: 'boolean',
     value: 'true',
   },
-
-  metafield: {
-    namespace: 'debut',
-    key: 'is_bogo',
-    type: 'boolean',
-  },
+  metafields: [
+    {
+      namespace: 'debut',
+      key: 'is_bogo',
+      type: 'boolean',
+      value: 'true',
+    },
+  ],
 };
 
 // example amount of discount
@@ -96,11 +101,14 @@ const configAmount: Config = {
     type: 'boolean',
     value: 'true',
   },
-  metafield: {
-    namespace: 'debut',
-    key: 'is_bogo',
-    type: 'boolean',
-  },
+  metafields: [
+    {
+      namespace: 'debut',
+      key: 'is_bogo',
+      type: 'boolean',
+      value: 'true',
+    },
+  ],
 };
 
 export default config;

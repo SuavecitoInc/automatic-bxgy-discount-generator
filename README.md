@@ -37,7 +37,7 @@ Configuration:
   - startsAt: date in `YYYY-MM-DD` format
 - excludedByOptions: Variant options to use as filters to exclude variants from discount eligibility
 - excludedByMetafield: A metafield to used as a filter to exclude variants from discount eligibility
-- metafield: Set this metafield for all discount eligible variants
+- metafields: Set these metafields for all discount eligible variants
 
 > ./config.ts
 
@@ -65,11 +65,14 @@ const config: Config = {
     type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
     value: 'true',
   },
-  metafield: {
-    namespace: 'some_namespace',
-    key: 'some_key',
-    type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
-  },
+  metafields: [
+    {
+      namespace: 'some_namespace',
+      key: 'some_key',
+      type: 'boolean', // https://shopify.dev/docs/apps/build/custom-data/metafields/list-of-data-types
+      value: 'true',
+    },
+  ],
 };
 ```
 

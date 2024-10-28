@@ -113,29 +113,25 @@ async function createDiscount(variants: string[]) {
   return response.data;
 }
 
-async function updateVariantMetafield(
-  metafield: {
+async function updateVariantMetafields(
+  metafields: {
     namespace: string;
     key: string;
     type: string;
-  },
+    value: string;
+  }[],
   ownerId: string,
-  value: string,
 ) {
-  const { namespace, key, type } = metafield;
-
   const response = await shopifyAdmin<UpdateVariantMetafieldsMutation>(
     MutationUpdateVariantMetafields,
     {
-      metafields: [
-        {
-          namespace,
-          key,
-          ownerId,
-          type,
-          value,
-        },
-      ],
+      metafields: metafields.map((metafield) => ({
+        namespace: metafield.namespace,
+        key: metafield.key,
+        ownerId,
+        type: metafield.type,
+        value: metafield.value,
+      })),
     },
   );
 
@@ -153,18 +149,12 @@ async function updateVariantMetafield(
 }
 
 async function updateVariants(variantIds: string[]) {
-  const { metafield } = config;
-  const value = 'true';
+  const { metafields } = config;
 
-  console.log(
-    'Updating variants with metafield',
-    metafield,
-    'and value',
-    value,
-  );
+  console.log('Updating variants with metafield', metafields);
 
   const updated = variantIds.map(async (id) => {
-    const response = await updateVariantMetafield(metafield, id, value);
+    const response = await updateVariantMetafields(metafields, id);
     return response;
   });
 
@@ -207,11 +197,11 @@ async function main() {
     console.log(variantIds.length, 'variants are eligible for discount');
 
     // set metafield
-    if (config.metafield) {
+    if (config.metafields) {
       await updateVariants(variantIds);
     }
     // create discount
-    await createDiscount(variantIds);
+    // await createDiscount(variantIds);
   } catch (err: any) {
     console.log('ERROR', err);
   }
