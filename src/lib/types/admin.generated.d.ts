@@ -21,6 +21,7 @@ export type GetCollectionByHandleQueryVariables = AdminTypes.Exact<{
   handle: AdminTypes.Scalars['String']['input'];
   namespace: AdminTypes.Scalars['String']['input'];
   key: AdminTypes.Scalars['String']['input'];
+  cursor?: AdminTypes.InputMaybe<AdminTypes.Scalars['String']['input']>;
 }>;
 
 
@@ -32,7 +33,7 @@ export type GetCollectionByHandleQuery = { collectionByHandle?: AdminTypes.Maybe
                 Pick<AdminTypes.ProductVariant, 'id' | 'sku' | 'title' | 'price' | 'compareAtPrice'>
                 & { product: Pick<AdminTypes.Product, 'id' | 'title'>, selectedOptions: Array<Pick<AdminTypes.SelectedOption, 'name' | 'value'>>, excludeFromDiscounts?: AdminTypes.Maybe<Pick<AdminTypes.Metafield, 'value'>> }
               ) }> } }
-        ) }> } }
+        ) }>, pageInfo: Pick<AdminTypes.PageInfo, 'hasNextPage' | 'hasPreviousPage' | 'endCursor' | 'startCursor'> } }
   )> };
 
 export type GetVariantBySkuQueryVariables = AdminTypes.Exact<{
@@ -46,7 +47,7 @@ export type GetVariantBySkuQuery = { productVariants: { edges: Array<{ node: (
       ) }> } };
 
 interface GeneratedQueryTypes {
-  "#graphql\n  query GetCollectionByHandle($handle: String!, $namespace: String!, $key: String!) {\n    collectionByHandle(handle: $handle) {\n      id\n      title\n      products(first: 250, reverse: true) {\n        edges {\n          node {\n            id\n            title\n            variants(first: 50) {\n              edges {\n                node {\n                  id\n                  sku\n                  title\n                  price\n                  compareAtPrice\n                  product {\n                    id\n                    title\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                  excludeFromDiscounts: metafield(namespace: $namespace, key: $key) {\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": {return: GetCollectionByHandleQuery, variables: GetCollectionByHandleQueryVariables},
+  "#graphql\n  query GetCollectionByHandle($handle: String!, $namespace: String!, $key: String!, $cursor: String) {\n    collectionByHandle(handle: $handle) {\n      id\n      title\n      products(first: 250, reverse: true, after: $cursor) {\n        edges {\n          node {\n            id\n            title\n            variants(first: 50) {\n              edges {\n                node {\n                  id\n                  sku\n                  title\n                  price\n                  compareAtPrice\n                  product {\n                    id\n                    title\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                  excludeFromDiscounts: metafield(namespace: $namespace, key: $key) {\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n        pageInfo {\n          hasNextPage\n          hasPreviousPage\n          endCursor\n          startCursor\n        }\n      }\n    }\n  }\n": {return: GetCollectionByHandleQuery, variables: GetCollectionByHandleQueryVariables},
   "#graphql\n  query GetVariantBySku($sku: String!) {\n    productVariants(first: 1, query: $sku) {\n      edges {\n        node {\n          id\n          title\n          sku\n          product {\n            handle\n            title\n          }\n        }\n      }\n    }\n  }\n": {return: GetVariantBySkuQuery, variables: GetVariantBySkuQueryVariables},
 }
 

@@ -16,26 +16,45 @@ type Products =
 
 async function getProductsFromCollection() {
   // get products from collection
-  const response = await shopifyAdmin<GetCollectionByHandleQuery>(
-    QueryGetCollectionByHandle,
-    {
-      handle: config.collectionHandle || 'mens-hair',
-      namespace: config?.excludedByMetafield?.namespace || 'test',
-      key: config?.excludedByMetafield?.key || 'test',
-    },
-  );
+  let products: Products = [];
+  async function getProducts(cursor?: string) {
+    const response = await shopifyAdmin<GetCollectionByHandleQuery>(
+      QueryGetCollectionByHandle,
+      {
+        handle: config.collectionHandle || 'mens-hair',
+        namespace: config?.excludedByMetafield?.namespace || 'test',
+        key: config?.excludedByMetafield?.key || 'test',
+        cursor,
+      },
+    );
 
-  if (response.error) {
-    console.log('ERROR', response.error);
-    return null;
+    if (response.error) {
+      console.log('ERROR', response.error);
+      return null;
+    }
+
+    if (!response.data.collectionByHandle) {
+      console.log('Collection not found');
+      return null;
+    }
+
+    const hasNextPage =
+      response.data.collectionByHandle.products.pageInfo.hasNextPage;
+    const endCursor =
+      response.data.collectionByHandle.products.pageInfo.endCursor;
+
+    products = products.concat(response.data.collectionByHandle.products.edges);
+
+    if (hasNextPage) {
+      console.log('Fetching more products...');
+      await getProducts(endCursor);
+    } else {
+      console.log('All products fetched');
+    }
   }
 
-  if (!response.data.collectionByHandle) {
-    console.log('Collection not found');
-    return null;
-  }
-
-  return response.data.collectionByHandle.products.edges;
+  await getProducts();
+  return products;
 }
 
 function filterProducts(products: Products) {

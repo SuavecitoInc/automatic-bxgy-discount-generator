@@ -1,9 +1,9 @@
 const query = `#graphql
-  query GetCollectionByHandle($handle: String!, $namespace: String!, $key: String!) {
+  query GetCollectionByHandle($handle: String!, $namespace: String!, $key: String!, $cursor: String) {
     collectionByHandle(handle: $handle) {
       id
       title
-      products(first: 250, reverse: true) {
+      products(first: 250, reverse: true, after: $cursor) {
         edges {
           node {
             id
@@ -31,6 +31,12 @@ const query = `#graphql
               }
             }
           }
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          endCursor
+          startCursor
         }
       }
     }
