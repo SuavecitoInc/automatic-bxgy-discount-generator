@@ -10,6 +10,7 @@ export type DiscountTypeItems = {
         all: boolean;
         products: {
           productVariantsToAdd: string[];
+          productsToAdd: string[];
         };
       };
       value: {
@@ -21,6 +22,7 @@ export type DiscountTypeItems = {
         all: boolean;
         products: {
           productVariantsToAdd: string[];
+          productsToAdd: string[];
         };
       };
       value: {
@@ -49,6 +51,7 @@ export type DiscountTypeAmount = {
         all: boolean;
         products: {
           productVariantsToAdd: string[];
+          productsToAdd: string[];
         };
       };
       value: {
@@ -60,6 +63,7 @@ export type DiscountTypeAmount = {
         all: boolean;
         products: {
           productVariantsToAdd: string[];
+          productsToAdd: string[];
         };
       };
       value: {

@@ -2,7 +2,12 @@ import type {
   GetCollectionByHandleQuery,
   UpdateVariantMetafieldsMutation,
 } from './lib/types/admin.generated';
-import { createDiscountInput, shopifyAdmin, verifyConfig } from './lib/utils';
+import {
+  createDiscountInput,
+  shopifyAdmin,
+  verifyConfig,
+  writeToFile,
+} from './lib/utils';
 import { getCollectionByHandle as QueryGetCollectionByHandle } from './lib/admin/handlers/queries';
 import {
   createAutomaticBxgyDiscount as MutationCreateAutomaticBxgyDiscount,
@@ -57,30 +62,39 @@ async function getProductsFromCollection() {
   return products;
 }
 
+type EligibleVariant = {
+  id: string;
+  sku: string;
+  title: string;
+  selectedOptions: { name: string; value: string }[];
+  excludeFromDiscounts: boolean;
+};
+
 function filterProducts(products: Products) {
   // use config to filter out products that are excluded
   console.log(
     'Filtering products with excluded options:',
     config.excludedByOptions.map((option) => option).join(', '),
   );
-  const filteredVariants: {
-    id: string;
-    sku: string;
-    title: string;
-    selectedOptions: { name: string; value: string }[];
-    excludeFromDiscounts: boolean;
-  }[] = [];
+  const filteredVariants: string[] = [];
+  const filteredProducts: string[] = [];
+  const variantsToMutate: string[] = [];
   for (const product of products) {
+    const variantLength = product.node.variants.edges.length;
+    const eligibleVariants: EligibleVariant[] = [];
     for (const variant of product.node.variants.edges) {
-      const hasExcludedOption = variant.node.selectedOptions.some((option) =>
-        config.excludedByOptions.includes(option.value),
-      );
+      const hasExcludedOption =
+        config.excludedByOptions.length > 0
+          ? variant.node.selectedOptions.some((option) =>
+              config.excludedByOptions.includes(option.value),
+            )
+          : false;
 
       const excludeFromDiscounts =
         variant.node.excludeFromDiscounts?.value === 'true';
 
       if (!hasExcludedOption && !excludeFromDiscounts) {
-        filteredVariants.push({
+        eligibleVariants.push({
           id: variant.node.id,
           sku: variant.node.sku,
           title: `${product.node.title} - ${variant.node.title}`,
@@ -89,19 +103,34 @@ function filterProducts(products: Products) {
         });
       }
     }
+    // add all eligible variants to filteredVariants
+    variantsToMutate.push(...eligibleVariants.map((variant) => variant.id));
+    if (eligibleVariants.length !== variantLength) {
+      // filteredVariants.push(...eligibleVariants);
+      filteredVariants.push(...eligibleVariants.map((variant) => variant.id));
+    } else {
+      filteredProducts.push(product.node.id);
+    }
   }
-  return filteredVariants;
+
+  return {
+    filteredVariants,
+    filteredProducts,
+    variantsToMutate,
+  };
 }
 
-async function createDiscount(variants: string[]) {
+async function createDiscount(products: string[], variants: string[]) {
   console.log('Creating discount for variants');
   // create discount
-  const input = createDiscountInput(variants);
+  const input = createDiscountInput(products, variants);
 
   const response = await shopifyAdmin<any>(
     MutationCreateAutomaticBxgyDiscount,
     input,
   );
+
+  console.log('CREATE DISCOUNT RESPONSE', JSON.stringify(response, null, 2));
 
   if (response.error) {
     console.log('ERROR', response.error);
@@ -187,21 +216,34 @@ async function main() {
     console.log(products.length, 'products found');
 
     // use config to filter out products that are excluded
-    const filteredVariants = filterProducts(products);
-    if (!filteredVariants) {
+    const {
+      filteredProducts: productIds,
+      filteredVariants: variantIds,
+      variantsToMutate,
+    } = filterProducts(products);
+    if (!variantIds.length) {
       console.log('No filtered products found');
       return;
     }
 
-    const variantIds = filteredVariants.map((variant) => variant.id);
     console.log(variantIds.length, 'variants are eligible for discount');
+    console.log(productIds.length, 'products are eligible for discount');
+    console.log(variantsToMutate.length, 'variants to mutate');
+
+    // const variantIds = filteredVariants.map((variant) => variant.id);
+    // console.log(variantIds.length, 'variants are eligible for discount');
 
     // set metafield
     if (config.metafields) {
-      await updateVariants(variantIds);
+      await updateVariants(variantsToMutate);
     }
+    // write eligible variant ids to file
+    await writeToFile(
+      'eligible-variant-ids',
+      JSON.stringify(variantsToMutate, null, 2),
+    );
     // create discount
-    await createDiscount(variantIds);
+    await createDiscount(productIds, variantIds);
   } catch (err: any) {
     console.log('ERROR', err);
   }

@@ -35,10 +35,10 @@ type Config = {
 
 // example percentage discount
 const config: Config = {
-  collectionHandle: 'mens-hair',
+  collectionHandle: 'buy-2-get-1-free',
   timezone: 'America/Los_Angeles',
   discount: {
-    title: 'Test Buy 2 Get 1 Free',
+    title: 'Buy 2 Get 1 Free 2024',
     customerBuys: {
       type: 'ITEMS',
       quantity: '2',
@@ -46,19 +46,14 @@ const config: Config = {
     customerGets: {
       quantity: '1',
       discountType: 'PERCENT',
-      percentage: 1,
+      percentage: 1, // decimal value
     },
-    startsAt: '2024-10-31',
+    startsAt: '2024-11-15',
   },
-  excludedByOptions: [
-    'Limited',
-    'Johnny Cupcakes',
-    "Flamin' Hot",
-    'The Nightmare Before Christmas',
-  ],
+  excludedByOptions: ['3 Pack', '5 Pack', '6 Pack', '32 oz', '64 oz'],
   excludedByMetafield: {
-    namespace: 'suavecito_function',
-    key: 'exclude_from_all_discounts',
+    namespace: 'debut',
+    key: 'exclude_variant_online',
     type: 'boolean',
     value: 'true',
   },
@@ -66,6 +61,12 @@ const config: Config = {
     {
       namespace: 'debut',
       key: 'is_b2g1f',
+      type: 'boolean',
+      value: 'true',
+    },
+    {
+      namespace: 'debut',
+      key: 'enable_b2g1f',
       type: 'boolean',
       value: 'true',
     },

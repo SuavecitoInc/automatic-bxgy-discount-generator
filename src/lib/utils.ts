@@ -1,6 +1,8 @@
 import fetch from 'isomorphic-fetch';
 import dotenv from 'dotenv';
 import moment from 'moment-timezone';
+import fs from 'fs/promises';
+import path from 'path';
 
 import config from '../../config.js';
 import { ADMIN_API_ENDPOINT, SHOPIFY_ADMIN_API_TOKEN } from './const.js';
@@ -40,7 +42,7 @@ export function getDate() {
   return moment(config.discount.startsAt).tz(config.timezone).toISOString();
 }
 
-function discountItemsInput(variants: string[]) {
+function discountItemsInput(products: string[], variants: string[]) {
   const input: DiscountTypeItems = {
     automaticBxgyDiscount: {
       combinesWith: {
@@ -53,6 +55,7 @@ function discountItemsInput(variants: string[]) {
           all: false,
           products: {
             productVariantsToAdd: variants,
+            productsToAdd: products,
           },
         },
         value: {
@@ -64,6 +67,7 @@ function discountItemsInput(variants: string[]) {
           all: false,
           products: {
             productVariantsToAdd: variants,
+            productsToAdd: products,
           },
         },
         value: {
@@ -83,7 +87,7 @@ function discountItemsInput(variants: string[]) {
   return input;
 }
 
-function discountAmountInput(variants: string[]) {
+function discountAmountInput(products: string[], variants: string[]) {
   const input: DiscountTypeAmount = {
     automaticBxgyDiscount: {
       combinesWith: {
@@ -96,6 +100,7 @@ function discountAmountInput(variants: string[]) {
           all: false,
           products: {
             productVariantsToAdd: variants,
+            productsToAdd: products,
           },
         },
         value: {
@@ -107,6 +112,7 @@ function discountAmountInput(variants: string[]) {
           all: false,
           products: {
             productVariantsToAdd: variants,
+            productsToAdd: products,
           },
         },
         value: {
@@ -126,15 +132,15 @@ function discountAmountInput(variants: string[]) {
   return input;
 }
 
-export function createDiscountInput(variants: string[]) {
+export function createDiscountInput(products: string[], variants: string[]) {
   const customerBuysType = config.discount.customerBuys.type;
   const discountedValueType = config.discount.customerGets.discountType;
 
   if (customerBuysType === 'ITEMS' && discountedValueType === 'PERCENT') {
-    return discountItemsInput(variants);
+    return discountItemsInput(products, variants);
   }
 
-  return discountAmountInput(variants);
+  return discountAmountInput(products, variants);
 }
 
 export function verifyConfig() {
@@ -203,4 +209,13 @@ export function verifyConfig() {
     valid: errors.length === 0,
     errors,
   };
+}
+
+export async function writeToFile(fileName: string, data: string) {
+  const file = path.join(__dirname, `../../../export/${fileName}.json`);
+  try {
+    await fs.writeFile(file, data);
+  } catch (err: any) {
+    console.log('Error writing to file', err);
+  }
 }
