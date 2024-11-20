@@ -88,7 +88,7 @@ npm run start
 Verifying config...
 Config is valid, let's proceed
 29 products found in collection
-Filtering Products with excluded options: Limited, Johnny Cupcakes
+Filtering Products with excluded options: Limited, Special Edition
 60 variants are eligible for discount
 Updating variants with metafield { namespace: 'debut', key: 'is_bogo', type: 'boolean' } and value true
 60 variant metafields were updated
