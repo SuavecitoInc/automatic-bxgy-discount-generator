@@ -1,6 +1,7 @@
 import type {
   GetCollectionByHandleQuery,
   UpdateVariantMetafieldsMutation,
+  CreateAutomaticBxgyDiscountMutation,
 } from './lib/types/admin.generated';
 import {
   createDiscountInput,
@@ -125,7 +126,7 @@ async function createDiscount(products: string[], variants: string[]) {
   // create discount
   const input = createDiscountInput(products, variants);
 
-  const response = await shopifyAdmin<any>(
+  const response = await shopifyAdmin<CreateAutomaticBxgyDiscountMutation>(
     MutationCreateAutomaticBxgyDiscount,
     input,
   );
